@@ -73,32 +73,29 @@
     <script>
         function handleProjectTypeChange() {
             var projectType = document.getElementById("projectType").value;
-            var roadFields = document.getElementById("roadFields");
-            var waterSupplyFields = document.getElementById("waterSupplyFields");
-            var irrigationFields = document.getElementById("irrigationFields");
-            var buildingFields = document.getElementById("buildingFields");
-
-            roadFields.style.display = projectType === "Road" ? "block" : "none";
-            waterSupplyFields.style.display = projectType === "Water Supply" ? "block" : "none";
-            irrigationFields.style.display = projectType === "Irrigation" ? "block" : "none";
-            buildingFields.style.display = projectType === "Building" ? "block" : "none";
+            document.getElementById("roadFields").style.display = projectType === "Road" ? "block" : "none";
+            document.getElementById("waterSupplyFields").style.display = projectType === "Water Supply" ? "block" : "none";
+            document.getElementById("irrigationFields").style.display = projectType === "Irrigation" ? "block" : "none";
+            document.getElementById("buildingFields").style.display = projectType === "Building" ? "block" : "none";
         }
 
         function submitForm() {
             var formData = {
-                sn: document.getElementById("sn").value,
-                wardNo: document.getElementById("wardNo").value,
-                projectName: document.getElementById("projectName").value,
-                projectType: document.getElementById("projectType").value,
-                estimatedAmount: document.getElementById("estimatedAmount").value,
-                contractDate: document.getElementById("contractDate").value,
-                valuationAmount: document.getElementById("valuationAmount").value,
-                workCompletionDate: document.getElementById("workCompletionDate").value,
-                workCategory: document.getElementById("workCategory").value,
-                lengthOrCapacity: document.getElementById("lengthOrCapacity").value,
-                roomNumber: document.getElementById("roomNumber").value,
-                remarks: document.getElementById("remarks").value
+                sn: document.getElementById("sn").value || "",
+                wardNo: document.getElementById("wardNo").value || "",
+                projectName: document.getElementById("projectName").value || "",
+                projectType: document.getElementById("projectType").value || "",
+                estimatedAmount: document.getElementById("estimatedAmount").value || "",
+                contractDate: document.getElementById("contractDate").value || "",
+                valuationAmount: document.getElementById("valuationAmount").value || "",
+                workCompletionDate: document.getElementById("workCompletionDate").value || "",
+                workCategory: document.getElementById("workCategory") ? document.getElementById("workCategory").value : "",
+                lengthOrCapacity: document.getElementById("lengthOrCapacity") ? document.getElementById("lengthOrCapacity").value : "",
+                roomNumber: document.getElementById("roomNumber") ? document.getElementById("roomNumber").value : "",
+                remarks: document.getElementById("remarks").value || ""
             };
+
+            console.log("Submitting form data:", formData);
 
             fetch("https://script.google.com/macros/s/AKfycbyB_IbVFgkfgRrBslVTMXSHcmMIMYr68gW1ixXixI1eJznnUGBSU4V-xZFPlhLJ4qvy/exec", {
                 method: "POST",
@@ -150,55 +147,24 @@
                 </select>
             </div>
 
-            <div id="roadFields" class="form-group conditional">
-                <label>Road Work Type:</label>
-                <select id="workCategory">
-                    <option value="">Select Type</option>
-                    <option value="New Cutting">New Cutting</option>
-                    <option value="Double Cutting">Double Cutting</option>
-                    <option value="PCC">PCC</option>
-                    <option value="RCC">RCC</option>
-                    <option value="Soling">Soling</option>
-                </select>
-            </div>
-
-            <div id="waterSupplyFields" class="form-group conditional">
-                <label>Water Supply Work Type:</label>
-                <select id="workCategory">
-                    <option value="Intake">Intake</option>
-                    <option value="RVT">RVT</option>
-                    <option value="Pipeline">Pipeline</option>
-                </select>
-            </div>
-
-            <div id="irrigationFields" class="form-group conditional">
-                <label>Irrigation Work Type:</label>
-                <select id="workCategory">
-                    <option value="Earth Canal">Earth Canal</option>
-                    <option value="PCC Canal">PCC Canal</option>
-                    <option value="RCC Canal">RCC Canal</option>
-                </select>
-            </div>
-
-            <div id="buildingFields" class="form-group conditional">
-                <label>Building Work Type:</label>
-                <select id="workCategory">
-                    <option value="New Building Construction">New Building Construction</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Toilet Construction">Toilet Construction</option>
-                </select>
-                <label>Room Number:</label>
-                <input type="number" id="roomNumber">
-            </div>
-
             <div class="form-group">
                 <label>Estimated Amount (NRs):</label>
                 <input type="number" id="estimatedAmount" required>
             </div>
 
             <div class="form-group">
+                <label>Valuation Amount:</label>
+                <input type="number" id="valuationAmount" required>
+            </div>
+
+            <div class="form-group">
                 <label>Contract Date:</label>
                 <input type="date" id="contractDate" required>
+            </div>
+
+            <div class="form-group">
+                <label>Work Completion Date:</label>
+                <input type="date" id="workCompletionDate" required>
             </div>
 
             <div class="form-group">
