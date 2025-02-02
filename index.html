@@ -21,7 +21,7 @@
             border-radius: 12px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
         }
 
@@ -66,67 +66,46 @@
             margin-bottom: 15px;
         }
 
-        #roadSubCategory, #upgradingType, #roadLengthGroup {
-            display: none;
-        }
+        .conditional { display: none; }
     </style>
     <script>
         function handleProjectTypeChange() {
             var projectType = document.getElementById("projectType").value;
-            var roadSubCategory = document.getElementById("roadSubCategory");
-            var upgradingType = document.getElementById("upgradingType");
-            var roadLengthGroup = document.getElementById("roadLengthGroup");
-
+            document.querySelectorAll(".conditional").forEach(el => el.style.display = "none");
+            
             if (projectType === "Road") {
-                roadSubCategory.style.display = "block";
-                roadLengthGroup.style.display = "block";
-            } else {
-                roadSubCategory.style.display = "none";
-                upgradingType.style.display = "none";
-                roadLengthGroup.style.display = "none";
-            }
-        }
-
-        function handleRoadCategoryChange() {
-            var roadCategory = document.getElementById("roadCategory").value;
-            var upgradingType = document.getElementById("upgradingType");
-
-            if (roadCategory === "Upgrading") {
-                upgradingType.style.display = "block";
-            } else {
-                upgradingType.style.display = "none";
+                document.getElementById("roadWork").style.display = "block";
+                document.getElementById("lengthGroup").style.display = "block";
+            } else if (projectType === "Water Supply") {
+                document.getElementById("waterSupplyWork").style.display = "block";
+                document.getElementById("capacityGroup").style.display = "block";
+            } else if (projectType === "Irrigation") {
+                document.getElementById("irrigationWork").style.display = "block";
+                document.getElementById("lengthGroup").style.display = "block";
+            } else if (projectType === "Building") {
+                document.getElementById("buildingWork").style.display = "block";
+                document.getElementById("roomNumberGroup").style.display = "block";
             }
         }
 
         function submitForm() {
             var formData = {
+                sn: document.getElementById("sn").value,
+                wardNo: document.getElementById("wardNo").value,
                 projectName: document.getElementById("projectName").value,
                 projectType: document.getElementById("projectType").value,
-                roadCategory: document.getElementById("roadCategory").value,
-                upgradingType: document.getElementById("upgrading").value,
+                workType: document.getElementById("workType").value,
                 estimatedAmount: document.getElementById("estimatedAmount").value,
                 contractDate: document.getElementById("contractDate").value,
-                roadLength: document.getElementById("roadLength").value,
-                fileUrl: document.getElementById("fileUrl").value
+                valuationAmount: document.getElementById("valuationAmount").value,
+                completionDate: document.getElementById("completionDate").value,
+                length: document.getElementById("length").value,
+                capacity: document.getElementById("capacity").value,
+                roomNumber: document.getElementById("roomNumber").value,
+                remarks: document.getElementById("remarks").value
             };
-
-            fetch("https://script.google.com/macros/s/AKfycby5Hw3nY4yrvrf7cbcbMsAxWYQvPFfNvqMsj6ipfh167fRKGqv84ToyOUbCs48S8rNj/exec", {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                alert("Form submitted successfully!");
-                document.getElementById("projectForm").reset();
-                handleProjectTypeChange(); // Reset form visibility settings
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Error submitting form.");
-            });
+            
+            console.log("Submitting: ", formData);
         }
     </script>
 </head>
@@ -134,61 +113,41 @@
     <div class="container">
         <h2>Infrastructure Project Form</h2>
         <form id="projectForm" onsubmit="event.preventDefault(); submitForm();">
-            <div class="form-group">
-                <label>Project Name:</label>
-                <input type="text" id="projectName" required>
-            </div>
-
-            <div class="form-group">
-                <label>Project Type:</label>
+            <div class="form-group"><label>SN:</label><input type="number" id="sn" required></div>
+            <div class="form-group"><label>Ward No:</label><input type="number" id="wardNo" required></div>
+            <div class="form-group"><label>Project Name:</label><input type="text" id="projectName" required></div>
+            <div class="form-group"><label>Project Type:</label>
                 <select id="projectType" onchange="handleProjectTypeChange()" required>
                     <option value="">Select Project Type</option>
                     <option value="Road">Road</option>
-                    <option value="Building">Building</option>
                     <option value="Water Supply">Water Supply</option>
-                    <option value="Earthwork">Earthwork</option>
+                    <option value="Irrigation">Irrigation</option>
+                    <option value="Building">Building</option>
+                    <option value="Bridge">Bridge</option>
+                    <option value="Others">Others</option>
                 </select>
             </div>
 
-            <div class="form-group" id="roadSubCategory">
-                <label>Road Category:</label>
-                <select id="roadCategory" onchange="handleRoadCategoryChange()">
-                    <option value="">Select Road Category</option>
-                    <option value="New Track Opening">New Track Opening</option>
-                    <option value="Upgrading">Upgrading</option>
-                </select>
-            </div>
-
-            <div class="form-group" id="upgradingType">
-                <label>Upgrading Type:</label>
-                <select id="upgrading">
-                    <option value="">Select Upgrading Type</option>
-                    <option value="Road Widening">Road Widening</option>
+            <div class="form-group conditional" id="roadWork"><label>Work Type:</label>
+                <select id="workType">
+                    <option value="New Cutting">New Cutting</option>
+                    <option value="Double Cutting">Double Cutting</option>
                     <option value="PCC">PCC</option>
                     <option value="RCC">RCC</option>
+                    <option value="Soling">Soling</option>
                 </select>
             </div>
-
-            <div class="form-group" id="roadLengthGroup">
-                <label>Road Length (km):</label>
-                <input type="number" id="roadLength">
-            </div>
-
-            <div class="form-group">
-                <label>Estimated Amount ($):</label>
-                <input type="number" id="estimatedAmount" required>
-            </div>
-
-            <div class="form-group">
-                <label>Contract Date:</label>
-                <input type="date" id="contractDate" required>
-            </div>
-
-            <div class="form-group">
-                <label>File URL:</label>
-                <input type="url" id="fileUrl">
-            </div>
-
+            
+            <div class="form-group conditional" id="lengthGroup"><label>Length (m):</label><input type="number" id="length"></div>
+            <div class="form-group conditional" id="capacityGroup"><label>Capacity:</label><input type="text" id="capacity"></div>
+            <div class="form-group conditional" id="roomNumberGroup"><label>Room Number:</label><input type="number" id="roomNumber"></div>
+            
+            <div class="form-group"><label>Estimated Amount (NRs):</label><input type="number" id="estimatedAmount" required></div>
+            <div class="form-group"><label>Contract Date:</label><input type="date" id="contractDate" required></div>
+            <div class="form-group"><label>Valuation Amount (NRs):</label><input type="number" id="valuationAmount"></div>
+            <div class="form-group"><label>Work Completion Date:</label><input type="date" id="completionDate"></div>
+            <div class="form-group"><label>Remarks:</label><input type="text" id="remarks"></div>
+            
             <button type="submit">Submit</button>
         </form>
     </div>
