@@ -37,7 +37,7 @@
             margin: 10px 0 5px;
         }
 
-        input {
+        select, input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -65,12 +65,45 @@
         .form-group {
             margin-bottom: 15px;
         }
+
+        #roadSubCategory, #upgradingType, #roadLengthGroup {
+            display: none;
+        }
     </style>
     <script>
+        function handleProjectTypeChange() {
+            var projectType = document.getElementById("projectType").value;
+            var roadSubCategory = document.getElementById("roadSubCategory");
+            var upgradingType = document.getElementById("upgradingType");
+            var roadLengthGroup = document.getElementById("roadLengthGroup");
+
+            if (projectType === "Road") {
+                roadSubCategory.style.display = "block";
+                roadLengthGroup.style.display = "block";
+            } else {
+                roadSubCategory.style.display = "none";
+                upgradingType.style.display = "none";
+                roadLengthGroup.style.display = "none";
+            }
+        }
+
+        function handleRoadCategoryChange() {
+            var roadCategory = document.getElementById("roadCategory").value;
+            var upgradingType = document.getElementById("upgradingType");
+
+            if (roadCategory === "Upgrading") {
+                upgradingType.style.display = "block";
+            } else {
+                upgradingType.style.display = "none";
+            }
+        }
+
         function submitForm() {
             var formData = {
                 projectName: document.getElementById("projectName").value,
                 projectType: document.getElementById("projectType").value,
+                roadCategory: document.getElementById("roadCategory").value,
+                upgradingType: document.getElementById("upgrading").value,
                 estimatedAmount: document.getElementById("estimatedAmount").value,
                 contractDate: document.getElementById("contractDate").value,
                 roadLength: document.getElementById("roadLength").value,
@@ -88,6 +121,7 @@
             .then(response => {
                 alert("Form submitted successfully!");
                 document.getElementById("projectForm").reset();
+                handleProjectTypeChange(); // Reset form visibility settings
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -107,7 +141,37 @@
 
             <div class="form-group">
                 <label>Project Type:</label>
-                <input type="text" id="projectType" required>
+                <select id="projectType" onchange="handleProjectTypeChange()" required>
+                    <option value="">Select Project Type</option>
+                    <option value="Road">Road</option>
+                    <option value="Building">Building</option>
+                    <option value="Water Supply">Water Supply</option>
+                    <option value="Earthwork">Earthwork</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="roadSubCategory">
+                <label>Road Category:</label>
+                <select id="roadCategory" onchange="handleRoadCategoryChange()">
+                    <option value="">Select Road Category</option>
+                    <option value="New Track Opening">New Track Opening</option>
+                    <option value="Upgrading">Upgrading</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="upgradingType">
+                <label>Upgrading Type:</label>
+                <select id="upgrading">
+                    <option value="">Select Upgrading Type</option>
+                    <option value="Road Widening">Road Widening</option>
+                    <option value="PCC">PCC</option>
+                    <option value="RCC">RCC</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="roadLengthGroup">
+                <label>Road Length (km):</label>
+                <input type="number" id="roadLength">
             </div>
 
             <div class="form-group">
@@ -118,11 +182,6 @@
             <div class="form-group">
                 <label>Contract Date:</label>
                 <input type="date" id="contractDate" required>
-            </div>
-
-            <div class="form-group">
-                <label>Road Length (km):</label>
-                <input type="number" id="roadLength" required>
             </div>
 
             <div class="form-group">
