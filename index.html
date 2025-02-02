@@ -1,136 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infrastructure Project Submission</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Infrastructure Project Form</title>
     <script>
-        function submitData() {
-            let projectName = document.getElementById("projectName").value;
-            let projectType = document.getElementById("projectType").value;
-            let estimatedAmount = document.getElementById("estimatedAmount").value;
-            let contractDate = document.getElementById("contractDate").value;
-            let roadLength = document.getElementById("roadLength").value;
-            let fileInput = document.getElementById("fileUpload").files[0];
-
-            let reader = new FileReader();
-            reader.onloadend = function () {
-                let fileData = reader.result.split(",")[1]; // Remove base64 header
-                let fileName = fileInput ? fileInput.name : "";
-
-                let data = {
-                    projectName: projectName,
-                    projectType: projectType,
-                    estimatedAmount: estimatedAmount,
-                    contractDate: contractDate,
-                    roadLength: projectType === "Road" ? roadLength : "N/A",
-                    fileData: fileData,
-                    fileName: fileName
-                };
-
-                fetch("https://script.google.com/macros/s/AKfycbxEnmADqpW5VpHBCDJFgOJO4HTUsO33pkVOIXoEbE3asG8KCOS034yAObuVuAa35HYA/exec", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.text())
-                .then(result => {
-                    document.getElementById("successMessage").innerHTML = `<div class="alert alert-success">Submitted Successfully!</div>`;
-                    document.getElementById("dataForm").reset();
-                    fetchData(); // Refresh table
-                })
-                .catch(error => console.log("Error:", error));
+        function submitForm() {
+            var formData = {
+                projectName: document.getElementById("projectName").value,
+                projectType: document.getElementById("projectType").value,
+                estimatedAmount: document.getElementById("estimatedAmount").value,
+                contractDate: document.getElementById("contractDate").value,
+                roadLength: document.getElementById("roadLength").value,
+                fileUrl: document.getElementById("fileUrl").value
             };
 
-            if (fileInput) {
-                reader.readAsDataURL(fileInput);
-            } else {
-                reader.onloadend(); // Submit without file
-            }
+            fetch("https://script.google.com/macros/s/AKfycbxybRQSi-egTMZb1zd0UCA_6GPjOLN7lRamvXjLAl7yZgVNkKJy1Ly_HA4lHs0LlHLI/exec", {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                alert("Form submitted successfully!");
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error submitting form.");
+            });
         }
-
-        function fetchData() {
-            fetch("https://script.google.com/macros/s/AKfycbxEnmADqpW5VpHBCDJFgOJO4HTUsO33pkVOIXoEbE3asG8KCOS034yAObuVuAa35HYA/exec")
-                .then(response => response.json())
-                .then(data => {
-                    let tableBody = document.getElementById("tableBody");
-                    tableBody.innerHTML = "";
-                    data.forEach(row => {
-                        tableBody.innerHTML += `
-                            <tr>
-                                <td>${row[1]}</td>
-                                <td>${row[2]}</td>
-                                <td>${row[3]}</td>
-                                <td>${row[4]}</td>
-                                <td>${row[5]}</td>
-                                <td><a href="${row[6]}" target="_blank">View File</a></td>
-                            </tr>`;
-                    });
-                })
-                .catch(error => console.log("Error:", error));
-        }
-
-        window.onload = fetchData;
     </script>
 </head>
-<body class="container mt-4">
-    <h2 class="text-center">Infrastructure Project Submission</h2>
-    
-    <div id="successMessage"></div>
+<body>
+    <h2>Infrastructure Project Form</h2>
+    <form onsubmit="event.preventDefault(); submitForm();">
+        <label>Project Name:</label>
+        <input type="text" id="projectName" required><br><br>
 
-    <form id="dataForm" class="p-4 border rounded bg-light" onsubmit="event.preventDefault(); submitData();">
-        <div class="mb-3">
-            <label class="form-label">Project Name:</label>
-            <input type="text" id="projectName" class="form-control" required>
-        </div>
+        <label>Project Type:</label>
+        <input type="text" id="projectType" required><br><br>
 
-        <div class="mb-3">
-            <label class="form-label">Project Type:</label>
-            <select id="projectType" class="form-select" required>
-                <option value="Water Supply">Water Supply</option>
-                <option value="Road">Road</option>
-                <option value="Building">Building</option>
-            </select>
-        </div>
+        <label>Estimated Amount ($):</label>
+        <input type="number" id="estimatedAmount" required><br><br>
 
-        <div class="mb-3">
-            <label class="form-label">Estimated Amount:</label>
-            <input type="number" id="estimatedAmount" class="form-control" required>
-        </div>
+        <label>Contract Date:</label>
+        <input type="date" id="contractDate" required><br><br>
 
-        <div class="mb-3">
-            <label class="form-label">Contract Date:</label>
-            <input type="date" id="contractDate" class="form-control" required>
-        </div>
+        <label>Road Length (km):</label>
+        <input type="number" id="roadLength" required><br><br>
 
-        <div class="mb-3">
-            <label class="form-label">Road Length (if applicable):</label>
-            <input type="number" id="roadLength" class="form-control">
-        </div>
+        <label>File URL:</label>
+        <input type="url" id="fileUrl"><br><br>
 
-        <div class="mb-3">
-            <label class="form-label">Upload File:</label>
-            <input type="file" id="fileUpload" class="form-control">
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Submit</button>
+        <button type="submit">Submit</button>
     </form>
-
-    <h3 class="mt-5">Submitted Records</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Project Name</th>
-                <th>Type</th>
-                <th>Estimated Amount</th>
-                <th>Contract Date</th>
-                <th>Road Length</th>
-                <th>File</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-        </tbody>
-    </table>
 </body>
 </html>
+
