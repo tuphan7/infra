@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastructure Project Submission</title>
+    <script>
+        function submitData() {
+            let projectName = document.getElementById("projectName").value;
+            let projectType = document.getElementById("projectType").value;
+            let estimatedAmount = document.getElementById("estimatedAmount").value;
+            let contractDate = document.getElementById("contractDate").value;
+            let roadLength = document.getElementById("roadLength").value;
+            let fileInput = document.getElementById("fileUpload").files[0];
+
+            let reader = new FileReader();
+            reader.onloadend = function () {
+                let fileData = reader.result.split(",")[1]; // Remove base64 header
+                let fileName = fileInput ? fileInput.name : "";
+
+                let data = {
+                    projectName: projectName,
+                    projectType: projectType,
+                    estimatedAmount: estimatedAmount,
+                    contractDate: contractDate,
+                    roadLength: projectType === "Road" ? roadLength : "N/A",
+                    fileData: fileData,
+                    fileName: fileName
+                };
+
+                fetch("https://script.google.com/macros/s/AKfycbxEnmADqpW5VpHBCDJFgOJO4HTUsO33pkVOIXoEbE3asG8KCOS034yAObuVuAa35HYA/exec", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.text())
+                .then(result => {
+                    alert("Submitted Successfully!");
+                    document.getElementById("dataForm").reset();
+                })
+                .catch(error => console.log("Error:", error));
+            };
+
+            if (fileInput) {
+                reader.readAsDataURL(fileInput);
+            } else {
+                reader.onloadend(); // Submit without file
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Enter Project Details</h2>
+    <form id="dataForm" onsubmit="event.preventDefault(); submitData();">
+        <label>Project Name:</label>
+        <input type="text" id="projectName" required><br><br>
+
+        <label>Project Type:</label>
+        <select id="projectType" required>
+            <option value="Water Supply">Water Supply</option>
+            <option value="Road">Road</option>
+            <option value="Building">Building</option>
+        </select><br><br>
+
+        <label>Estimated Amount:</label>
+        <input type="number" id="estimatedAmount" required><br><br>
+
+        <label>Contract Date:</label>
+        <input type="date" id="contractDate" required><br><br>
+
+        <label>Road Length (if applicable):</label>
+        <input type="number" id="roadLength"><br><br>
+
+        <label>Upload File:</label>
+        <input type="file" id="fileUpload"><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
