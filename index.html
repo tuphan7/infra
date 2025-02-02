@@ -73,10 +73,29 @@
     <script>
         function handleProjectTypeChange() {
             var projectType = document.getElementById("projectType").value;
-            document.getElementById("roadFields").style.display = projectType === "Road" ? "block" : "none";
-            document.getElementById("waterSupplyFields").style.display = projectType === "Water Supply" ? "block" : "none";
-            document.getElementById("irrigationFields").style.display = projectType === "Irrigation" ? "block" : "none";
-            document.getElementById("buildingFields").style.display = projectType === "Building" ? "block" : "none";
+
+            // Hide all conditional fields first
+            document.getElementById("roadFields").style.display = "none";
+            document.getElementById("waterSupplyFields").style.display = "none";
+            document.getElementById("irrigationFields").style.display = "none";
+            document.getElementById("buildingFields").style.display = "none";
+            document.getElementById("bridgeFields").style.display = "none";
+            document.getElementById("otherFields").style.display = "none";
+
+            // Show only relevant fields
+            if (projectType === "Road") {
+                document.getElementById("roadFields").style.display = "block";
+            } else if (projectType === "Water Supply") {
+                document.getElementById("waterSupplyFields").style.display = "block";
+            } else if (projectType === "Irrigation") {
+                document.getElementById("irrigationFields").style.display = "block";
+            } else if (projectType === "Building") {
+                document.getElementById("buildingFields").style.display = "block";
+            } else if (projectType === "Bridge") {
+                document.getElementById("bridgeFields").style.display = "block";
+            } else {
+                document.getElementById("otherFields").style.display = "block";
+            }
         }
 
         function submitForm() {
@@ -89,9 +108,11 @@
                 contractDate: document.getElementById("contractDate").value || "",
                 valuationAmount: document.getElementById("valuationAmount").value || "",
                 workCompletionDate: document.getElementById("workCompletionDate").value || "",
-                workCategory: document.getElementById("workCategory") ? document.getElementById("workCategory").value : "",
-                lengthOrCapacity: document.getElementById("lengthOrCapacity") ? document.getElementById("lengthOrCapacity").value : "",
+                roadLength: document.getElementById("roadLength") ? document.getElementById("roadLength").value : "",
+                waterCapacity: document.getElementById("waterCapacity") ? document.getElementById("waterCapacity").value : "",
+                irrigationType: document.getElementById("irrigationType") ? document.getElementById("irrigationType").value : "",
                 roomNumber: document.getElementById("roomNumber") ? document.getElementById("roomNumber").value : "",
+                bridgeLength: document.getElementById("bridgeLength") ? document.getElementById("bridgeLength").value : "",
                 remarks: document.getElementById("remarks").value || ""
             };
 
@@ -125,16 +146,6 @@
             </div>
 
             <div class="form-group">
-                <label>Ward No.:</label>
-                <input type="text" id="wardNo" required>
-            </div>
-
-            <div class="form-group">
-                <label>Project Name:</label>
-                <input type="text" id="projectName" required>
-            </div>
-
-            <div class="form-group">
                 <label>Project Type:</label>
                 <select id="projectType" onchange="handleProjectTypeChange()" required>
                     <option value="">Select Project Type</option>
@@ -147,27 +158,32 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Estimated Amount (NRs):</label>
-                <input type="number" id="estimatedAmount" required>
+            <div id="roadFields" class="conditional">
+                <label>Road Length (km):</label>
+                <input type="number" id="roadLength">
             </div>
 
-            <div class="form-group">
-                <label>Valuation Amount:</label>
-                <input type="number" id="valuationAmount" required>
+            <div id="waterSupplyFields" class="conditional">
+                <label>Water Supply Capacity (liters):</label>
+                <input type="number" id="waterCapacity">
             </div>
 
-            <div class="form-group">
-                <label>Contract Date:</label>
-                <input type="date" id="contractDate" required>
+            <div id="irrigationFields" class="conditional">
+                <label>Irrigation Type:</label>
+                <input type="text" id="irrigationType">
             </div>
 
-            <div class="form-group">
-                <label>Work Completion Date:</label>
-                <input type="date" id="workCompletionDate" required>
+            <div id="buildingFields" class="conditional">
+                <label>Number of Rooms:</label>
+                <input type="number" id="roomNumber">
             </div>
 
-            <div class="form-group">
+            <div id="bridgeFields" class="conditional">
+                <label>Bridge Length (meters):</label>
+                <input type="number" id="bridgeLength">
+            </div>
+
+            <div id="otherFields" class="conditional">
                 <label>Remarks:</label>
                 <input type="text" id="remarks">
             </div>
