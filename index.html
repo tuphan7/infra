@@ -99,17 +99,28 @@
         }
 
         function submitForm() {
+            var projectName = document.getElementById("projectName").value;
+            var projectType = document.getElementById("projectType").value;
+            var roadCategory = document.getElementById("roadCategory") ? document.getElementById("roadCategory").value : "";
+            var upgradingType = document.getElementById("upgrading") ? document.getElementById("upgrading").value : "";
+            var estimatedAmount = document.getElementById("estimatedAmount").value;
+            var contractDate = document.getElementById("contractDate").value;
+            var roadLength = document.getElementById("roadLength").value;
+            var fileUrl = document.getElementById("fileUrl").value;
+
+            // Prepare form data for submission
             var formData = {
-                projectName: document.getElementById("projectName").value,
-                projectType: document.getElementById("projectType").value,
-                roadCategory: document.getElementById("roadCategory").value,
-                upgradingType: document.getElementById("upgrading").value,
-                estimatedAmount: document.getElementById("estimatedAmount").value,
-                contractDate: document.getElementById("contractDate").value,
-                roadLength: document.getElementById("roadLength").value,
-                fileUrl: document.getElementById("fileUrl").value
+                projectName: projectName,
+                projectType: projectType,
+                roadCategory: roadCategory,
+                upgradingType: upgradingType,
+                estimatedAmount: estimatedAmount,
+                contractDate: contractDate,
+                roadLength: roadLength,
+                fileUrl: fileUrl
             };
 
+            // Submit the form data via POST request
             fetch("https://script.google.com/macros/s/AKfycbxybRQSi-egTMZb1zd0UCA_6GPjOLN7lRamvXjLAl7yZgVNkKJy1Ly_HA4lHs0LlHLI/exec", {
                 method: "POST",
                 mode: "no-cors",
