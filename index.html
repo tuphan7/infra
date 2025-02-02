@@ -23,8 +23,6 @@
             width: 100%;
             max-width: 500px;
             text-align: center;
-            overflow-y: auto;
-            max-height: 90vh;
         }
 
         h2 {
@@ -68,55 +66,22 @@
             margin-bottom: 15px;
         }
 
-        .conditional-fields {
+        .conditional {
             display: none;
         }
     </style>
     <script>
         function handleProjectTypeChange() {
             var projectType = document.getElementById("projectType").value;
-            var workTypeGroup = document.getElementById("workTypeGroup");
-            var lengthCapacityGroup = document.getElementById("lengthCapacityGroup");
-            var roomNumberGroup = document.getElementById("roomNumberGroup");
+            var roadFields = document.getElementById("roadFields");
+            var waterSupplyFields = document.getElementById("waterSupplyFields");
+            var irrigationFields = document.getElementById("irrigationFields");
+            var buildingFields = document.getElementById("buildingFields");
 
-            workTypeGroup.style.display = "none";
-            lengthCapacityGroup.style.display = "none";
-            roomNumberGroup.style.display = "none";
-
-            if (["Road", "Water Supply", "Irrigation", "Building"].includes(projectType)) {
-                workTypeGroup.style.display = "block";
-            }
-
-            if (["Road", "Water Supply", "Irrigation"].includes(projectType)) {
-                lengthCapacityGroup.style.display = "block";
-            }
-
-            if (projectType === "Building") {
-                roomNumberGroup.style.display = "block";
-            }
-
-            updateWorkOptions(projectType);
-        }
-
-        function updateWorkOptions(projectType) {
-            var workSelect = document.getElementById("workCategory");
-            workSelect.innerHTML = ""; 
-
-            var workOptions = {
-                "Road": ["New cutting", "Double cutting", "PCC", "RCC", "Soling"],
-                "Water Supply": ["Intake", "RVT", "Pipeline"],
-                "Irrigation": ["Earth canal", "PCC canal", "RCC canal"],
-                "Building": ["New building construction", "Maintenance", "Toilet construction"]
-            };
-
-            if (workOptions[projectType]) {
-                workOptions[projectType].forEach(option => {
-                    let opt = document.createElement("option");
-                    opt.value = option;
-                    opt.textContent = option;
-                    workSelect.appendChild(opt);
-                });
-            }
+            roadFields.style.display = projectType === "Road" ? "block" : "none";
+            waterSupplyFields.style.display = projectType === "Water Supply" ? "block" : "none";
+            irrigationFields.style.display = projectType === "Irrigation" ? "block" : "none";
+            buildingFields.style.display = projectType === "Building" ? "block" : "none";
         }
 
         function submitForm() {
@@ -135,18 +100,16 @@
                 remarks: document.getElementById("remarks").value
             };
 
-            fetch("https://script.google.com/macros/s/AKfycbzKvlXazQCjnS4HCcGwdpdwRaVv0lnW4khUnY_Wj2nMLfGdvnD6GxD7EEf8qOsQu_0/exec", {
+            fetch("https://script.google.com/macros/s/AKfycbyB_IbVFgkfgRrBslVTMXSHcmMIMYr68gW1ixXixI1eJznnUGBSU4V-xZFPlhLJ4qvy/exec", {
                 method: "POST",
                 mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             })
             .then(() => {
                 alert("Form submitted successfully!");
                 document.getElementById("projectForm").reset();
-                handleProjectTypeChange();
+                handleProjectTypeChange(); // Reset conditional fields
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -159,10 +122,23 @@
     <div class="container">
         <h2>Infrastructure Project Form</h2>
         <form id="projectForm" onsubmit="event.preventDefault(); submitForm();">
-            <div class="form-group"><label>SN:</label><input type="number" id="sn" required></div>
-            <div class="form-group"><label>Ward No.:</label><input type="number" id="wardNo" required></div>
-            <div class="form-group"><label>Project Name:</label><input type="text" id="projectName" required></div>
-            <div class="form-group"><label>Project Type:</label>
+            <div class="form-group">
+                <label>SN:</label>
+                <input type="text" id="sn" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ward No.:</label>
+                <input type="text" id="wardNo" required>
+            </div>
+
+            <div class="form-group">
+                <label>Project Name:</label>
+                <input type="text" id="projectName" required>
+            </div>
+
+            <div class="form-group">
+                <label>Project Type:</label>
                 <select id="projectType" onchange="handleProjectTypeChange()" required>
                     <option value="">Select Project Type</option>
                     <option value="Road">Road</option>
@@ -173,26 +149,65 @@
                     <option value="Others">Others</option>
                 </select>
             </div>
-            <div class="form-group"><label>Estimated Amount:</label><input type="number" id="estimatedAmount" required></div>
-            <div class="form-group"><label>Contract Date:</label><input type="date" id="contractDate" required></div>
-            <div class="form-group"><label>Valuation Amount:</label><input type="number" id="valuationAmount"></div>
-            <div class="form-group"><label>Work Completion Date:</label><input type="date" id="workCompletionDate"></div>
 
-            <div class="form-group conditional-fields" id="workTypeGroup">
-                <label>Work Category:</label>
-                <select id="workCategory"></select>
+            <div id="roadFields" class="form-group conditional">
+                <label>Road Work Type:</label>
+                <select id="workCategory">
+                    <option value="">Select Type</option>
+                    <option value="New Cutting">New Cutting</option>
+                    <option value="Double Cutting">Double Cutting</option>
+                    <option value="PCC">PCC</option>
+                    <option value="RCC">RCC</option>
+                    <option value="Soling">Soling</option>
+                </select>
             </div>
-            <div class="form-group conditional-fields" id="lengthCapacityGroup">
-                <label>Length (m) / Capacity:</label><input type="number" id="lengthOrCapacity">
+
+            <div id="waterSupplyFields" class="form-group conditional">
+                <label>Water Supply Work Type:</label>
+                <select id="workCategory">
+                    <option value="Intake">Intake</option>
+                    <option value="RVT">RVT</option>
+                    <option value="Pipeline">Pipeline</option>
+                </select>
             </div>
-            <div class="form-group conditional-fields" id="roomNumberGroup">
-                <label>Room Number:</label><input type="number" id="roomNumber">
+
+            <div id="irrigationFields" class="form-group conditional">
+                <label>Irrigation Work Type:</label>
+                <select id="workCategory">
+                    <option value="Earth Canal">Earth Canal</option>
+                    <option value="PCC Canal">PCC Canal</option>
+                    <option value="RCC Canal">RCC Canal</option>
+                </select>
             </div>
-            <div class="form-group"><label>Remarks:</label><input type="text" id="remarks"></div>
+
+            <div id="buildingFields" class="form-group conditional">
+                <label>Building Work Type:</label>
+                <select id="workCategory">
+                    <option value="New Building Construction">New Building Construction</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Toilet Construction">Toilet Construction</option>
+                </select>
+                <label>Room Number:</label>
+                <input type="number" id="roomNumber">
+            </div>
+
+            <div class="form-group">
+                <label>Estimated Amount (NRs):</label>
+                <input type="number" id="estimatedAmount" required>
+            </div>
+
+            <div class="form-group">
+                <label>Contract Date:</label>
+                <input type="date" id="contractDate" required>
+            </div>
+
+            <div class="form-group">
+                <label>Remarks:</label>
+                <input type="text" id="remarks">
+            </div>
 
             <button type="submit">Submit</button>
         </form>
     </div>
 </body>
 </html>
-
