@@ -23,6 +23,8 @@
             width: 100%;
             max-width: 500px;
             text-align: center;
+            overflow-y: auto;
+            max-height: 90vh;
         }
 
         h2 {
@@ -75,12 +77,7 @@
             var projectType = document.getElementById("projectType").value;
 
             // Hide all conditional fields first
-            document.getElementById("roadFields").style.display = "none";
-            document.getElementById("waterSupplyFields").style.display = "none";
-            document.getElementById("irrigationFields").style.display = "none";
-            document.getElementById("buildingFields").style.display = "none";
-            document.getElementById("bridgeFields").style.display = "none";
-            document.getElementById("otherFields").style.display = "none";
+            document.querySelectorAll(".conditional").forEach(el => el.style.display = "none");
 
             // Show only relevant fields
             if (projectType === "Road") {
@@ -93,7 +90,7 @@
                 document.getElementById("buildingFields").style.display = "block";
             } else if (projectType === "Bridge") {
                 document.getElementById("bridgeFields").style.display = "block";
-            } else {
+            } else if (projectType === "Others") {
                 document.getElementById("otherFields").style.display = "block";
             }
         }
@@ -146,6 +143,16 @@
             </div>
 
             <div class="form-group">
+                <label>Ward No:</label>
+                <input type="text" id="wardNo" required>
+            </div>
+
+            <div class="form-group">
+                <label>Project Name:</label>
+                <input type="text" id="projectName" required>
+            </div>
+
+            <div class="form-group">
                 <label>Project Type:</label>
                 <select id="projectType" onchange="handleProjectTypeChange()" required>
                     <option value="">Select Project Type</option>
@@ -158,32 +165,52 @@
                 </select>
             </div>
 
-            <div id="roadFields" class="conditional">
+            <div class="form-group">
+                <label>Estimated Amount:</label>
+                <input type="number" id="estimatedAmount" required>
+            </div>
+
+            <div class="form-group">
+                <label>Contract Date:</label>
+                <input type="date" id="contractDate" required>
+            </div>
+
+            <div class="form-group">
+                <label>Valuation Amount:</label>
+                <input type="number" id="valuationAmount">
+            </div>
+
+            <div class="form-group">
+                <label>Work Completion Date:</label>
+                <input type="date" id="workCompletionDate">
+            </div>
+
+            <div id="roadFields" class="form-group conditional">
                 <label>Road Length (km):</label>
                 <input type="number" id="roadLength">
             </div>
 
-            <div id="waterSupplyFields" class="conditional">
+            <div id="waterSupplyFields" class="form-group conditional">
                 <label>Water Supply Capacity (liters):</label>
                 <input type="number" id="waterCapacity">
             </div>
 
-            <div id="irrigationFields" class="conditional">
+            <div id="irrigationFields" class="form-group conditional">
                 <label>Irrigation Type:</label>
                 <input type="text" id="irrigationType">
             </div>
 
-            <div id="buildingFields" class="conditional">
+            <div id="buildingFields" class="form-group conditional">
                 <label>Number of Rooms:</label>
                 <input type="number" id="roomNumber">
             </div>
 
-            <div id="bridgeFields" class="conditional">
+            <div id="bridgeFields" class="form-group conditional">
                 <label>Bridge Length (meters):</label>
                 <input type="number" id="bridgeLength">
             </div>
 
-            <div id="otherFields" class="conditional">
+            <div id="otherFields" class="form-group conditional">
                 <label>Remarks:</label>
                 <input type="text" id="remarks">
             </div>
@@ -193,3 +220,4 @@
     </div>
 </body>
 </html>
+
