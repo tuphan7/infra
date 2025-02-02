@@ -66,25 +66,67 @@
             margin-bottom: 15px;
         }
 
-        .conditional { display: none; }
+        .conditional-fields {
+            display: none;
+        }
     </style>
     <script>
         function handleProjectTypeChange() {
             var projectType = document.getElementById("projectType").value;
-            document.querySelectorAll(".conditional").forEach(el => el.style.display = "none");
-            
+            var workTypeGroup = document.getElementById("workTypeGroup");
+            var lengthCapacityGroup = document.getElementById("lengthCapacityGroup");
+            var roomNumberGroup = document.getElementById("roomNumberGroup");
+
+            // Hide all conditionally displayed elements
+            workTypeGroup.style.display = "none";
+            lengthCapacityGroup.style.display = "none";
+            roomNumberGroup.style.display = "none";
+
+            if (projectType === "Road" || projectType === "Water Supply" || projectType === "Irrigation" || projectType === "Building") {
+                workTypeGroup.style.display = "block";
+            }
+
+            if (projectType === "Road" || projectType === "Water Supply" || projectType === "Irrigation") {
+                lengthCapacityGroup.style.display = "block";
+            }
+
+            if (projectType === "Building") {
+                roomNumberGroup.style.display = "block";
+            }
+
+            updateWorkOptions(projectType);
+        }
+
+        function updateWorkOptions(projectType) {
+            var workSelect = document.getElementById("workCategory");
+            workSelect.innerHTML = ""; 
+
             if (projectType === "Road") {
-                document.getElementById("roadWork").style.display = "block";
-                document.getElementById("lengthGroup").style.display = "block";
+                workSelect.innerHTML = `
+                    <option value="New cutting">New cutting</option>
+                    <option value="Double cutting">Double cutting</option>
+                    <option value="PCC">PCC</option>
+                    <option value="RCC">RCC</option>
+                    <option value="Soling">Soling</option>
+                `;
             } else if (projectType === "Water Supply") {
-                document.getElementById("waterSupplyWork").style.display = "block";
-                document.getElementById("capacityGroup").style.display = "block";
+                workSelect.innerHTML = `
+                    <option value="Intake">Intake</option>
+                    <option value="RVT">RVT</option>
+                    <option value="Pipeline">Pipeline</option>
+                `;
             } else if (projectType === "Irrigation") {
-                document.getElementById("irrigationWork").style.display = "block";
-                document.getElementById("lengthGroup").style.display = "block";
+                workSelect.innerHTML = `
+                    <option value="Earth canal">Earth canal</option>
+                    <option value="PCC canal">PCC canal</option>
+                    <option value="RCC canal">RCC canal</option>
+                `;
             } else if (projectType === "Building") {
-                document.getElementById("buildingWork").style.display = "block";
-                document.getElementById("roomNumberGroup").style.display = "block";
+                workSelect.innerHTML = `
+                    <option value="New building construction">New building construction</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Toilet construction">Toilet construction</option>
+                `;
             }
         }
 
@@ -94,18 +136,33 @@
                 wardNo: document.getElementById("wardNo").value,
                 projectName: document.getElementById("projectName").value,
                 projectType: document.getElementById("projectType").value,
-                workType: document.getElementById("workType").value,
                 estimatedAmount: document.getElementById("estimatedAmount").value,
                 contractDate: document.getElementById("contractDate").value,
                 valuationAmount: document.getElementById("valuationAmount").value,
-                completionDate: document.getElementById("completionDate").value,
-                length: document.getElementById("length").value,
-                capacity: document.getElementById("capacity").value,
+                workCompletionDate: document.getElementById("workCompletionDate").value,
+                workCategory: document.getElementById("workCategory").value,
+                lengthOrCapacity: document.getElementById("lengthOrCapacity").value,
                 roomNumber: document.getElementById("roomNumber").value,
                 remarks: document.getElementById("remarks").value
             };
-            
-            console.log("Submitting: ", formData);
+
+            fetch("https://script.google.com/macros/s/AKfycbzKvlXazQCjnS4HCcGwdpdwRaVv0lnW4khUnY_Wj2nMLfGdvnD6GxD7EEf8qOsQu_0/exec", {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                alert("Form submitted successfully!");
+                document.getElementById("projectForm").reset();
+                handleProjectTypeChange(); // Reset conditional fields
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error submitting form.");
+            });
         }
     </script>
 </head>
@@ -113,10 +170,23 @@
     <div class="container">
         <h2>Infrastructure Project Form</h2>
         <form id="projectForm" onsubmit="event.preventDefault(); submitForm();">
-            <div class="form-group"><label>SN:</label><input type="number" id="sn" required></div>
-            <div class="form-group"><label>Ward No:</label><input type="number" id="wardNo" required></div>
-            <div class="form-group"><label>Project Name:</label><input type="text" id="projectName" required></div>
-            <div class="form-group"><label>Project Type:</label>
+            <div class="form-group">
+                <label>SN:</label>
+                <input type="number" id="sn" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ward No.:</label>
+                <input type="number" id="wardNo" required>
+            </div>
+
+            <div class="form-group">
+                <label>Project Name:</label>
+                <input type="text" id="projectName" required>
+            </div>
+
+            <div class="form-group">
+                <label>Project Type:</label>
                 <select id="projectType" onchange="handleProjectTypeChange()" required>
                     <option value="">Select Project Type</option>
                     <option value="Road">Road</option>
@@ -128,28 +198,29 @@
                 </select>
             </div>
 
-            <div class="form-group conditional" id="roadWork"><label>Work Type:</label>
-                <select id="workType">
-                    <option value="New Cutting">New Cutting</option>
-                    <option value="Double Cutting">Double Cutting</option>
-                    <option value="PCC">PCC</option>
-                    <option value="RCC">RCC</option>
-                    <option value="Soling">Soling</option>
-                </select>
+            <div class="form-group conditional-fields" id="workTypeGroup">
+                <label>Work Category:</label>
+                <select id="workCategory"></select>
             </div>
-            
-            <div class="form-group conditional" id="lengthGroup"><label>Length (m):</label><input type="number" id="length"></div>
-            <div class="form-group conditional" id="capacityGroup"><label>Capacity:</label><input type="text" id="capacity"></div>
-            <div class="form-group conditional" id="roomNumberGroup"><label>Room Number:</label><input type="number" id="roomNumber"></div>
-            
-            <div class="form-group"><label>Estimated Amount (NRs):</label><input type="number" id="estimatedAmount" required></div>
-            <div class="form-group"><label>Contract Date:</label><input type="date" id="contractDate" required></div>
-            <div class="form-group"><label>Valuation Amount (NRs):</label><input type="number" id="valuationAmount"></div>
-            <div class="form-group"><label>Work Completion Date:</label><input type="date" id="completionDate"></div>
-            <div class="form-group"><label>Remarks:</label><input type="text" id="remarks"></div>
-            
+
+            <div class="form-group conditional-fields" id="lengthCapacityGroup">
+                <label>Length (m) / Capacity:</label>
+                <input type="number" id="lengthOrCapacity">
+            </div>
+
+            <div class="form-group conditional-fields" id="roomNumberGroup">
+                <label>Room Number:</label>
+                <input type="number" id="roomNumber">
+            </div>
+
+            <div class="form-group">
+                <label>Remarks:</label>
+                <input type="text" id="remarks">
+            </div>
+
             <button type="submit">Submit</button>
         </form>
     </div>
 </body>
 </html>
+
